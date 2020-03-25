@@ -12,13 +12,14 @@
     "dev:react": "webpack -d --watch"
   },
   "dependencies": {
-    "express": "4.17.1",
-    "morgan": "1.9.1",
-    "body-parser": "1.19.0",
-    "path": "0.12.7",
-    "cors": "2.8.5",
-    "mongoose": "5.9.4",
     "axios": "0.19.2",
+    "body-parser": "1.19.0",
+    "cors": "2.8.5",
+    "express": "4.17.1",
+    "mongoose": "5.9.4",
+    "morgan": "1.9.1",
+    "nodemon": "^2.0.2",
+    "path": "0.12.7",
     "react": "16.13.0",
     "react-dom": "16.13.0"
   },
