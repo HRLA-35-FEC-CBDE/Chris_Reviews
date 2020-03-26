@@ -46,35 +46,59 @@ module.exports = {
     const product = await model.findById({ _id })
     for (let i = 0; i < product.reviews.length; i++) {
       if (product.questions[i]._id = id) {
-        product.questions[i].answer = answer;
+        product.questions[i].push(answer);
         break;
       }
     }
     return product.save()
   },
-  helpfulAnswerYes: (_id, id) => {
-    const answer = await model.findById({ _id })
+  helpfulAnswerYes: (_id, questionId, answerId) => {
+    const product = await model.findById({ _id })
     for (let i = 0; i < product.reviews.length; i++) {
-      if (product.questions[i]._id = id) {
-        product.questions[i].helpful + 1;
-        break;
+      if (product.questions[i]._id = questionId) {
+        for (let j = 0; j < product.questions[i].answers.length; j++) {
+          if (product.questions[i].answers[j]._id === answerId) {
+            product.questions[i].answers[j].helpful + 1
+          }
+          break;
+        }
       }
     }
     // const updatedProductReview = await product.save()
     // console.log(updatedProductReview)
-    return answer.save();
+    return product.save();
   },
-  helpfulAnswerNo: (_id, id) => {
-    const answer = await model.findById({ _id })
+  helpfulAnswerNo: (_id, questionId, answerId) => {
+    const product = await model.findById({ _id })
     for (let i = 0; i < product.reviews.length; i++) {
-      if (product.questions[i]._id = id) {
-        product.questions[i].notHelpful + 1;
-        break;
+      if (product.questions[i]._id = questionId) {
+        for (let j = 0; j < product.questions[i].answers.length; j++) {
+          if (product.questions[i].answers[j]._id === answerId) {
+            product.questions[i].answers[j].notHelpful + 1
+          }
+          break;
+        }
       }
     }
     // const updatedProductReview = await product.save()
     // console.log(updatedProductReview)
-    return answer.save();
+    return product.save();
   },
-  inapropriateAnswer: (_id, id) => model.findByIdAndUpdate({ _id: _id }, {"questions._id": id }, { $set: {"questions.$.report": true}}),
+  // inapropriateAnswer: (_id, id) => model.findByIdAndUpdate({ _id: _id }, {"questions._id": id }, { $set: {"questions.$.report": true}}),
+  inapropriateAnswer: (_id, questionId, answerId) => {
+    const product = await model.findById({ _id })
+    for (let i = 0; i < product.reviews.length; i++) {
+      if (product.questions[i]._id = questionId) {
+        for (let j = 0; j < product.questions[i].answers.length; j++) {
+          if (product.questions[i].answers[j]._id === answerId) {
+            product.questions[i].answers[j].report = true;
+          }
+          break;
+        }
+      }
+    }
+    // const updatedProductReview = await product.save()
+    // console.log(updatedProductReview)
+    return product.save();
+  }
 }

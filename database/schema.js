@@ -6,6 +6,7 @@ const ProductSchema = mongoose.Schema()
 const Product = new ProductSchema({
   product: { type: String, unique: true},
   reviews: [{
+    name: String,
     rating: Number,
     title: String,
     review: String,
@@ -17,11 +18,15 @@ const Product = new ProductSchema({
     report: { type: Boolean, default: false }
   }],
   questions: [{
+    name: String,
     question: String,
-    answer: String,
-    helpful: { type: Number, default: 0} ,
-    notHelpful: { type: Number, default: 0 },
-    report: { type: Boolean, default: false }
+    answers: [{
+      name: String,
+      answer: String,
+      helpful: { type: Number, default: 0} ,
+      notHelpful: { type: Number, default: 0 },
+      report: { type: Boolean, default: false }
+    }],
   }]
 });
 
