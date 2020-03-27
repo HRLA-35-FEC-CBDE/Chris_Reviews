@@ -1,10 +1,13 @@
 const mongoose = require('mongoose');
-const db = require('./index.js');
+const db = require('./');
 
-const ProductSchema = mongoose.Schema()
+const ProductSchema = mongoose.Schema;
 
-const Product = new ProductSchema({
-  product: { type: String, unique: true},
+const NewSchema = new ProductSchema({
+  product: {
+    type: String, 
+    unique: true
+  },
   reviews: [{
     name: String,
     rating: Number,
@@ -13,9 +16,18 @@ const Product = new ProductSchema({
     recommend: Boolean,
     email: String,
     feedback: String,
-    helpful: { type: Number, default: 0 },
-    notHelpful: { type: Number, default: 0 },
-    report: { type: Boolean, default: false }
+    helpful: {
+      type: Number,
+      default: 0 
+    },
+    notHelpful: {
+      type: Number,
+      default: 0
+    },
+    report: {
+      type: Boolean,
+      default: false 
+    }
   }],
   questions: [{
     name: String,
@@ -23,13 +35,22 @@ const Product = new ProductSchema({
     answers: [{
       name: String,
       answer: String,
-      helpful: { type: Number, default: 0} ,
-      notHelpful: { type: Number, default: 0 },
-      report: { type: Boolean, default: false }
+      helpful: {
+        type: Number,
+        default: 0
+      } ,
+      notHelpful: {
+        type: Number,
+        default: 0
+      },
+      report: {
+        type: Boolean,
+        default: false
+      }
     }],
   }]
 });
 
-const model = mongoose.model('review', Product);
+const productModel = mongoose.model('review', NewSchema);
 
-module.exports = model;
+module.exports = productModel;

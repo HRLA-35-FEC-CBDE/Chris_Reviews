@@ -7,7 +7,7 @@ mongoose.Promise = global.Promise;
 const db = mongoose.connection;
 
 db.once('open', _ => {
-  console.log('Database connected:', url)
+  console.log('Database connected:', () => console.log('mongodb running!'))
 })
 
 db.on('error', err => {
