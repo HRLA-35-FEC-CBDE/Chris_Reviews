@@ -3,40 +3,40 @@ const router = express.Router();
 const controllers = require('./controllers.js');
 
 router
-  .route('/:id/:productname')
+  .route('/:productId/:productName')
   .get(controllers.getOneProduct)
   .put(controllers.addReview);
 
 router
-  .route('/:id/:productname/review-not-helpful')
-  .put(controllers.reviewNotHelpful);
-
-router
-  .route('/:id/:productname/review-helpful')
+  .route('/:productId/:productName/:reviewId/review-helpful')
   .put(controllers.reviewHelpful);
 
 router
-  .route('/:id/:productname/review/inappropriate')
+  .route('/:productId/:productName/:reviewId/review-not-helpful')
+  .put(controllers.reviewNotHelpful);
+
+router
+  .route('/:productId/:productName/:reviewId/inappropriate')
   .put(controllers.reviewIsInappropriate);
 
 router
-  .route('/:id/:productname/add-question')
+  .route('/:productId/:productName/add-question')
   .put(controllers.addQuestion);
 
 router
-  .route('/:id/:productname/question/add-answer')
+  .route('/:productId/:productName/:questionId/add-answer')
   .put(controllers.answer);
 
 router
-  .route('/:id/:productname/:question/answer-not-helpful')
-  .put(controllers.answerNotHelpful);
-
-router
-  .route('/:id/:productname/:question/answer-helpful')
+  .route('/:productId/:productName/:questionId/:answerId/answer-helpful')
   .put(controllers.answerHelpful);
 
 router
-  .route('/:id/:productname/:question/answer-inappropriate')
+  .route('/:productId/:productName/:questionId/:answerId/answer-not-helpful')
+  .put(controllers.answerNotHelpful);
+
+router
+  .route('/:productId/:productName/:questionId/:answerId/answer-inappropriate')
   .put(controllers.answerIsInappropriate);
 
 module.exports = router;

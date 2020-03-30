@@ -10,6 +10,7 @@ const NewSchema = new ProductSchema({
   },
   reviews: [{
     name: String,
+    createdAt: { type: Date, default: Date.now },
     rating: Number,
     title: String,
     review: String,
@@ -31,9 +32,11 @@ const NewSchema = new ProductSchema({
   }],
   questions: [{
     name: String,
+    createdAt: { type: Date, default: Date.now },
     question: String,
     answers: [{
       name: String,
+      createdAt: { type: Date, default: Date.now },
       answer: String,
       helpful: {
         type: Number,

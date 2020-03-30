@@ -1,34 +1,58 @@
 const model = require('./schema.js');
 
 module.exports = {
-    getOne: (productId) => model.findById({ '_id': productId }),
-    writeReview: (productId, review) => {
-      return model.update({'_id': productId}, {$push: {'reviews': review}})
-    },
-    helpfulReviewYes: (productId, reviewId) => {
-      return model.update({ '_id': productId, 'reviews._id': reviewId}, { $inc: { 'reviews.$.helpful': 1 }})
-    },
-    helpfulReviewNo: (productId, reviewId) => {
-      return model.update({ '_id': productId, 'reviews._id': reviewId}, { $inc: { 'reviews.$.notHelpful': 1 }})
-    },
-    inappropriateReview: (productId, reviewId) => {
-      return model.update({ '_id': productId, 'reviews._id': reviewId}, { $set: { 'reviews.$.report': true }})
-    },
-    writeQuestion: (productId, question) => {
-      return model.update({'_id': productId}, {$push: {'questions': question}})
-    },
-    answerQuestion: (productId, questionId, answer) => {
-      return model.update({ '_id': productId, 'questions._id': questionId}, { $push: { 'questions.$.answers': answer }})
-    },
-    helpfulAnswerYes: (productId, questionId) => {
-      return model.update({ '_id': productId, 'questions._id': questionId, 'answers._id': answerId}, {$inc: {'answers.$.helpful': 1}})
-    },
-    helpfulAnswerNo: (productId, questionId) => {
-      return model.update({ '_id': productId, 'questions._id': questionId, 'answers._id': answerId}, {$inc: {'answers.$.notHelpful': 1}})
-    },
-    inapropriateAnswer: (productId, questionId) => {
-      return model.update({ '_id': productId, 'questions._id': questionId, 'answers._id': answerId}, {$set: {'answers.$.report': true}})
-    }
+  getOne: (productId) => model.findById({ '_id': productId }),
+  writeReview: (productId, review) => {
+    return model.update({'_id': productId}, {$push: {'reviews': review}})
+  },
+  helpfulReviewYes: (productId, reviewId) => {
+    return model.update({ '_id': productId, 'reviews._id': reviewId}, { $inc: { 'reviews.$.helpful': 1 }})
+  },
+  helpfulReviewNo: (productId, reviewId) => {
+    return model.update({ '_id': productId, 'reviews._id': reviewId}, { $inc: { 'reviews.$.notHelpful': 1 }})
+  },
+  inappropriateReview: (productId, reviewId) => {
+    return model.update({ '_id': productId, 'reviews._id': reviewId}, { $set: { 'reviews.$.report': true }})
+  },
+  writeQuestion: (productId, question) => {
+    return model.update({'_id': productId}, {$push: {'questions': question}})
+  },
+  answerQuestion: (productId, questionId, answer) => {
+    return model.update({ '_id': productId, 'questions._id': questionId}, { $push: { 'questions.$.answers': answer }})
+  },
+  helpfulAnswerYes: (productId, questionId, answerId) => {
+    return model.findById({ '_id': productId})
+    .then(product => {
+      product.questions.id(questionId).answers.id(answerId).helpful += 1
+      return product.save()
+    })
+    .then(data => {
+      return data
+    })
+    .catch(err => console.log(err))
+  },
+  helpfulAnswerNo: (productId, questionId, answerId) => {
+    return model.findById({ '_id': productId})
+    .then(product => {
+      product.questions.id(questionId).answers.id(answerId).notHelpful += 1
+      return product.save()
+    })
+    .then(data => {
+      return data
+    })
+    .catch(err => console.log(err))
+  },
+  inapropriateAnswer: (productId, questionId, answerId) => {
+    return model.findById({ '_id': productId})
+    .then(product => {
+      product.questions.id(questionId).answers.id(answerId).report = true;
+      return product.save()
+    })
+    .then(data => {
+      return data
+    })
+    .catch(err => console.log(err))
+  }
 }
 //   getOne: (_id) => model.findById({ _id }),
 //   writeReview: (_id, review) => {
