@@ -98,36 +98,85 @@ class App extends React.Component {
   renderReviews() {
     if (this.state.view === 'Most Relevant' || this.state.view === 'Most Helpful') {
       const reviews = this.state.product.reviews;
-      const sortedReviewsByHelpful = reviews.sort((a, b) => (a.helpful > b.helpful) ? 1 : -1)
+      const sortedReviewsByHelpful = reviews.sort((a, b) => a.helpful - b.helpful)
       return (
         sortedReviewsByHelpful.map((review, index) => (
           <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
-          recommended={review.recommended} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
+          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
         ))
       )
     } else if (this.state.view === 'Highest to Lowest Rating') {
-        const sortedReviewsByRatingHighToLow = [...this.state.reviewsByStars[one], ...this.state.reviewsByStars[two], ...this.state.reviewsByStars[three], ...this.state.reviewsByStars[four], ...this.state.reviewsByStars[five]]
+        const sortedReviewsByRatingHighToLow = [...this.state.reviewsByStars.one, ...this.state.reviewsByStars.two, ...this.state.reviewsByStars.three, ...this.state.reviewsByStars.four, ...this.state.reviewsByStars.five]
         return (
           sortedReviewsByRatingHighToLow.map((review, index) => (
             <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
-            recommended={review.recommended} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
+            recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
           ))
         )
     } else if (this.state.view === 'Lowest to Highest Rating') {
-      const sortedReviewsByRatingLowToHigh = [...this.state.reviewsByStars[five], ...this.state.reviewsByStars[four], ...this.state.reviewsByStars[three], ...this.state.reviewsByStars[two], ...this.state.reviewsByStars[one]]
+      const sortedReviewsByRatingLowToHigh = [...this.state.reviewsByStars.five, ...this.state.reviewsByStars.four, ...this.state.reviewsByStars.three, ...this.state.reviewsByStars.two, ...this.state.reviewsByStars.one]
       return (
         sortedReviewsByRatingLowToHigh.map((review, index) => (
           <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
-          recommended={review.recommended} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
+          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
         ))
       )
-    } else {
+    } else if (this.state.view === 'Most Recent') {
       const reviews = this.state.product.reviews;
-      const sortedReviewsByDate = reviews.sort((a, b) => (a.createdAt > b.createdAt) ? 1 : -1)
+      const sortedReviewsByDate = reviews.sort((a, b) => a.createdAt - b.createdAt)
       return (
         sortedReviewsByDate.map((review, index) => (
           <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
-          recommended={review.recommended} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
+          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
+        ))
+      )
+    } else if (this.state.view === 'Five Stars' && this.state.reviewsByStars.five.length > 0) {
+      return (
+        this.state.reviewsByStars.five.map((review, index) => (
+          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
+          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
+        ))
+      )
+    } else if (this.state.view === 'Four Stars' && this.state.reviewsByStars.four.length > 0) {
+      return (
+        this.state.reviewsByStars.four.map((review, index) => (
+          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
+          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
+        ))
+      )
+    } else if (this.state.view === 'Three Stars' && this.state.reviewsByStars.three.length > 0) {
+      return (
+        this.state.reviewsByStars.three.map((review, index) => (
+          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
+          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
+        ))
+      )
+    } else if (this.state.view === 'Two Stars' && this.state.reviewsByStars.two.length > 0) {
+      return (
+        this.state.reviewsByStars.two.map((review, index) => (
+          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
+          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
+        ))
+      )
+    } else if (this.state.view === 'Four Stars' && this.state.reviewsByStars.four.length > 0) {
+      return (
+        this.state.reviewsByStars.four.map((review, index) => (
+          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
+          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
+        ))
+      )
+    } else if (this.state.view === 'One Star' && this.state.reviewsByStars.one.length > 0) {
+      return (
+        this.state.reviewsByStars.one.map((review, index) => (
+          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
+          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
+        ))
+      )
+    } else {
+      return (
+        this.state.product.reviews.map((review, index) => (
+          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
+          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
         ))
       )
     }
@@ -168,11 +217,11 @@ class App extends React.Component {
               <div className="review-static-heading">Rating Snapshot &#40;{this.state.totalReviews}&#41;</div>
               <div className="review-static-heading">Select a row below to filter reviews.</div>
               <div className="reviews-static-meters">
-                <div>5 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally.five}></progress><span className="reviews-static-filtercount">{this.state.reviewtally.five}</span></div>
-                <div>4 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally.four}></progress><span className="reviews-static-filtercount">{this.state.reviewtally.four}</span></div>
-                <div>3 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally.three}></progress><span className="reviews-static-filtercount">{this.state.reviewtally.three}</span></div>
-                <div>2 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally.two}></progress><span className="reviews-static-filtercount">{this.state.reviewtally.two}</span></div>
-                <div>1 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally.one}></progress><span className="reviews-static-filtercount">{this.state.reviewtally.one}</span></div>
+                <div onClick={() => this.changeView('Five Stars')}>5 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally.five}></progress><span className="reviews-static-filtercount">{this.state.reviewtally.five}</span></div>
+                <div onClick={() => {console.log(this.state.reviewsByStars.four); this.changeView('Four Stars')}}>4 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally.four}></progress><span className="reviews-static-filtercount">{this.state.reviewtally.four}</span></div>
+                <div onClick={() => this.changeView('Three Stars')}>3 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally.three}></progress><span className="reviews-static-filtercount">{this.state.reviewtally.three}</span></div>
+                <div onClick={() => this.changeView('Two Stars')}>2 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally.two}></progress><span className="reviews-static-filtercount">{this.state.reviewtally.two}</span></div>
+                <div onClick={() => {console.log(this.state.reviewsByStars.one);this.changeView('One Star')}}>1 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally.one}></progress><span className="reviews-static-filtercount">{this.state.reviewtally.one}</span></div>
               </div>
             </div>
             <div className="reviews-static-right">
