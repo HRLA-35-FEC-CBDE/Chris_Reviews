@@ -6,22 +6,22 @@ module.exports = {
     return model.update({'_id': productId}, {$push: {'reviews': review}})
   },
   helpfulReviewYes: (productId, reviewId) => {
-    return model.update({ '_id': productId, 'reviews._id': reviewId}, { $inc: { 'reviews.$.helpful': 1 }})
+    return model.update({'_id': productId, 'reviews._id': reviewId}, {$inc: {'reviews.$.helpful': 1}})
   },
   helpfulReviewNo: (productId, reviewId) => {
-    return model.update({ '_id': productId, 'reviews._id': reviewId}, { $inc: { 'reviews.$.notHelpful': 1 }})
+    return model.update({'_id': productId, 'reviews._id': reviewId}, {$inc: {'reviews.$.notHelpful': 1}})
   },
   inappropriateReview: (productId, reviewId) => {
-    return model.update({ '_id': productId, 'reviews._id': reviewId}, { $set: { 'reviews.$.report': true }})
+    return model.update({'_id': productId, 'reviews._id': reviewId}, {$set: {'reviews.$.report': true}})
   },
   writeQuestion: (productId, question) => {
     return model.update({'_id': productId}, {$push: {'questions': question}})
   },
   answerQuestion: (productId, questionId, answer) => {
-    return model.update({ '_id': productId, 'questions._id': questionId}, { $push: { 'questions.$.answers': answer }})
+    return model.update({'_id': productId, 'questions._id': questionId}, {$push: {'questions.$.answers': answer}})
   },
   helpfulAnswerYes: (productId, questionId, answerId) => {
-    return model.findById({ '_id': productId})
+    return model.findById({'_id': productId})
     .then(product => {
       product.questions.id(questionId).answers.id(answerId).helpful += 1
       return product.save()
@@ -32,7 +32,7 @@ module.exports = {
     .catch(err => console.log(err))
   },
   helpfulAnswerNo: (productId, questionId, answerId) => {
-    return model.findById({ '_id': productId})
+    return model.findById({'_id': productId})
     .then(product => {
       product.questions.id(questionId).answers.id(answerId).notHelpful += 1
       return product.save()
@@ -42,8 +42,8 @@ module.exports = {
     })
     .catch(err => console.log(err))
   },
-  inapropriateAnswer: (productId, questionId, answerId) => {
-    return model.findById({ '_id': productId})
+  inappropriateAnswer: (productId, questionId, answerId) => {
+    return model.findById({'_id': productId})
     .then(product => {
       product.questions.id(questionId).answers.id(answerId).report = true;
       return product.save()

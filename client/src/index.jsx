@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Review from './components/Review.jsx';
 import Dropdown from './components/Dropdown.jsx';
+import FilterDisplay from './components/FilterDisplay.jsx';
+import Questions from './components/Questions.jsx';
+import DropDownQuestions from './components/DropDownQuestions.jsx';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
@@ -13,35 +16,55 @@ class App extends React.Component {
     this.state = {
       product: null,
       isLoaded: false,
+      filteredReviewsArray: null,
+      sortedReviewsArray: [],
+      filterButtons: [],
       reviewtally: {
-        one: null,
-        two: null,
-        three: null,
-        four: null,
-        five: null
+        1: null,
+        2: null,
+        3: null,
+        4: null,
+        5: null
       },
       reviewsByStars: {
-        one: [],
-        two: [],
-        three: [],
-        four: [],
-        five: []
+        1: [],
+        2: [],
+        3: [],
+        4: [],
+        5: []
       },
       averageReviewRating: null,
       totalReviews: null,
       starPercentage: null,
-      view: 'Most Relevant'
+      view: 'Most Relevant',
+      questions: [],
+      questionsView: 'Most Helpful Answers',
+      sortedQuestionArray: []
     }
+    this.changeViewQuestions = this.changeViewQuestions.bind(this);
     this.changeView = this.changeView.bind(this);
+    this.updateFilters = this.updateFilters.bind(this);
+    this.clearFilters = this.clearFilters.bind(this);
+  }
+  changeViewQuestions(view) {
+    this.setState({
+      questionsView: view
+    }, () => this.sortQuestions())
   }
 
   changeView(view) {
     this.setState({
       view: view
-    })
+    }, () => this.updateFilteredArray())
   }
 
-  tallyAllReviews(product) {
+  clearFilters() {
+    this.setState({
+      filterButtons: []
+    }, () => this.updateFilteredArray())
+  }
+
+  tallyAllReviewsAndQuestions(product) {
     let reviewTotal = product.reviews.length;
     let reviewSum = 0;
     let oneStar = 0;
@@ -73,113 +96,146 @@ class App extends React.Component {
       }
       reviewSum += product.reviews[i].rating
     }
-    let average = reviewSum / reviewTotal
+    let average = Math.round((reviewSum / reviewTotal) * 10) / 10
     let percent = (average/5) * 100
     this.setState({
       averageReviewRating: average,
       reviewtally: {
-        one: oneStar,
-        two: twoStar,
-        three: threeStar,
-        four: fourStar,
-        five: fiveStar
+        1: oneStar,
+        2: twoStar,
+        3: threeStar,
+        4: fourStar,
+        5: fiveStar
       },
+      questions: product.questions,
       starPercentage: percent,
       reviewsByStars: {
-        one: one,
-        two: two,
-        three: three,
-        four: four,
-        five: five
+        1: one,
+        2: two,
+        3: three,
+        4: four,
+        5: five
       }
     })
   }
 
-  renderReviews() {
-    if (this.state.view === 'Most Relevant' || this.state.view === 'Most Helpful') {
-      const reviews = this.state.product.reviews;
-      const sortedReviewsByHelpful = reviews.sort((a, b) => a.helpful - b.helpful)
-      return (
-        sortedReviewsByHelpful.map((review, index) => (
-          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
-          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
-        ))
-      )
-    } else if (this.state.view === 'Highest to Lowest Rating') {
-        const sortedReviewsByRatingHighToLow = [...this.state.reviewsByStars.one, ...this.state.reviewsByStars.two, ...this.state.reviewsByStars.three, ...this.state.reviewsByStars.four, ...this.state.reviewsByStars.five]
-        return (
-          sortedReviewsByRatingHighToLow.map((review, index) => (
-            <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
-            recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
-          ))
-        )
-    } else if (this.state.view === 'Lowest to Highest Rating') {
-      const sortedReviewsByRatingLowToHigh = [...this.state.reviewsByStars.five, ...this.state.reviewsByStars.four, ...this.state.reviewsByStars.three, ...this.state.reviewsByStars.two, ...this.state.reviewsByStars.one]
-      return (
-        sortedReviewsByRatingLowToHigh.map((review, index) => (
-          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
-          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
-        ))
-      )
-    } else if (this.state.view === 'Most Recent') {
-      const reviews = this.state.product.reviews;
-      const sortedReviewsByDate = reviews.sort((a, b) => a.createdAt - b.createdAt)
-      return (
-        sortedReviewsByDate.map((review, index) => (
-          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
-          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
-        ))
-      )
-    } else if (this.state.view === 'Five Stars' && this.state.reviewsByStars.five.length > 0) {
-      return (
-        this.state.reviewsByStars.five.map((review, index) => (
-          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
-          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
-        ))
-      )
-    } else if (this.state.view === 'Four Stars' && this.state.reviewsByStars.four.length > 0) {
-      return (
-        this.state.reviewsByStars.four.map((review, index) => (
-          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
-          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
-        ))
-      )
-    } else if (this.state.view === 'Three Stars' && this.state.reviewsByStars.three.length > 0) {
-      return (
-        this.state.reviewsByStars.three.map((review, index) => (
-          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
-          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
-        ))
-      )
-    } else if (this.state.view === 'Two Stars' && this.state.reviewsByStars.two.length > 0) {
-      return (
-        this.state.reviewsByStars.two.map((review, index) => (
-          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
-          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
-        ))
-      )
-    } else if (this.state.view === 'Four Stars' && this.state.reviewsByStars.four.length > 0) {
-      return (
-        this.state.reviewsByStars.four.map((review, index) => (
-          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
-          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
-        ))
-      )
-    } else if (this.state.view === 'One Star' && this.state.reviewsByStars.one.length > 0) {
-      return (
-        this.state.reviewsByStars.one.map((review, index) => (
-          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
-          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
-        ))
-      )
-    } else {
-      return (
-        this.state.product.reviews.map((review, index) => (
-          <Review title={review.title} name={review.name} rating={review.rating} id={this.state.product._id} key={index} createdAt={review.createdAt} 
-          recommended={review.recommended} report={review.report} helpful={review.helpful} notHelpful={review.notHelpful} body={review.review}/>
-        ))
-      )
+  removeDuplicates() {
+    var oldState = this.state.filterButtons
+    var newerState = oldState.filter((val, index) => oldState.indexOf(val) === index)
+    var newState = newerState.filter((val, index) => this.state.reviewtally[val] > 0)
+    this.setState({
+      filterButtons: newState
+    }, () => this.updateFilteredArray())
+  }
+
+  updateFilters(filterNumber) {
+    var newFilterState = this.state.filterButtons.filter(val => val !== filterNumber)
+    this.setState({
+      filterButtons: newFilterState
+    }, () => this.updateFilteredArray())
+  }
+
+  updateFilteredArray() {
+    this.setState({
+      filteredReviewsArray: []
+    })
+    if(this.state.filterButtons.length === 0) {
+      this.setState({
+        filteredReviewsArray: this.state.product.reviews
+      }, () => this.sortReviews())
     }
+    if (this.state.filterButtons.includes(1)) {
+      this.setState(prevState => ({
+        filteredReviewsArray: prevState.filteredReviewsArray.concat(this.state.reviewsByStars['1'])
+      }), () => this.sortReviews())
+    }
+    if (this.state.filterButtons.includes(2)) {
+      this.setState(prevState => ({
+        filteredReviewsArray: prevState.filteredReviewsArray.concat(this.state.reviewsByStars['2'])
+      }), () => this.sortReviews())
+    }
+    if (this.state.filterButtons.includes(3)) {
+      this.setState(prevState => ({
+        filteredReviewsArray: prevState.filteredReviewsArray.concat(this.state.reviewsByStars['3'])
+      }), () => this.sortReviews())
+    }
+    if (this.state.filterButtons.includes(4)) {
+      this.setState(prevState => ({
+        filteredReviewsArray: prevState.filteredReviewsArray.concat(this.state.reviewsByStars['4'])
+      }), () => this.sortReviews())
+    }
+    if (this.state.filterButtons.includes(5)) {
+      this.setState(prevState => ({
+        filteredReviewsArray: prevState.filteredReviewsArray.concat(this.state.reviewsByStars['5'])
+      }), () => this.sortReviews())
+    }
+  }
+
+  sortReviews() {
+    const reviews = this.state.filteredReviewsArray;
+    let sortedReviews;
+    if (this.state.view === 'Most Helpful') {
+      sortedReviews = reviews.sort((a, b) => b.helpful - a.helpful)
+    } else if (this.state.view === 'Highest to Lowest Rating') {
+      sortedReviews = reviews.sort((a, b) => b.rating - a.rating)
+    } else if (this.state.view === 'Lowest to Highest Rating') {
+      sortedReviews = reviews.sort((a, b) => a.rating - b.rating)
+    } else if (this.state.view === 'Most Recent') {
+      sortedReviews = reviews.sort((a, b) => -a.createdAt.localeCompare(b.createdAt))
+    } else if (this.state.view === 'Most Relevant') {
+      sortedReviews = reviews.sort((a, b) => b.notHelpful - a.notHelpful)
+    }
+    this.setState({
+      sortedReviewsArray: sortedReviews
+    })
+  }
+
+  sortQuestions() {
+    const { questions } = this.state
+    let sortedQuestions;
+    if (this.state.questionsView === 'Most Helpful Answers') {
+      var obj = questions.reduce((acc, val) => {
+        acc[val._id] = val.answers.reduce((array, answer) => {
+          array.push(answer.helpful);
+          return array;
+        }, [])
+        return acc;
+      }, {})
+      for (let key in obj) {
+        obj[key].sort((a, b) => b - a)
+        obj[key].length = 1
+      }
+      var sortedHelpUpvotes = Object.entries(obj)
+      var sortedArray = sortedHelpUpvotes.sort((a, b) => b[1] - a[1])
+      var truncatedArray = sortedArray.map(val => val[0])
+      sortedQuestions = questions.sort((a, b) => truncatedArray.indexOf(a._id) - truncatedArray.indexOf(b._id))
+    } else if (this.state.questionsView === 'Newest Answers') {
+      var obj = questions.reduce((acc, val) => {
+        acc[val._id] = val.answers.reduce((array, answer) => {
+          array.push(answer.createdAt);
+          return array;
+        }, [])
+        return acc;
+      }, {})
+      for (let key in obj) {
+        obj[key].sort((a, b) => -a.localeCompare(b))
+        obj[key].length = 1
+        obj[key] = obj[key].toString()
+      }
+      var sortedDates = Object.entries(obj)
+      var sortedArray = sortedDates.sort((a, b) => -a[1].localeCompare(b[1]))
+      var truncatedArray = sortedArray.map(val => val[0])
+      sortedQuestions = questions.sort((a, b) => truncatedArray.indexOf(a._id) - truncatedArray.indexOf(b._id))
+    } else if (this.state.questionsView === 'Answers Needed') {
+      sortedQuestions = questions.filter(val => val.answers.length === 0)
+    } else if (this.state.questionsView === 'Newest Questions') {
+      sortedQuestions = questions.sort((a, b) => -a.createdAt.localeCompare(b.createdAt))
+    } else if (this.state.questionsView === 'Most Answered') {
+      sortedQuestions = questions.sort((a, b) => b.answers.length - a.answers.length)
+    }
+    this.setState({
+      sortedQuestionArray: sortedQuestions
+    })
   }
 
   componentDidMount() {
@@ -191,12 +247,14 @@ class App extends React.Component {
       })
     })
     .then(() => {
-      this.tallyAllReviews(this.state.product);
+      this.tallyAllReviewsAndQuestions(this.state.product);
       let reviewTotal = this.state.product.reviews.length
       this.setState({
         isLoaded: true,
         totalReviews: reviewTotal
       })
+      this.updateFilters();
+      this.sortQuestions();
     })
   }
 
@@ -217,11 +275,11 @@ class App extends React.Component {
               <div className="review-static-heading">Rating Snapshot &#40;{this.state.totalReviews}&#41;</div>
               <div className="review-static-heading">Select a row below to filter reviews.</div>
               <div className="reviews-static-meters">
-                <div onClick={() => this.changeView('Five Stars')}>5 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally.five}></progress><span className="reviews-static-filtercount">{this.state.reviewtally.five}</span></div>
-                <div onClick={() => {console.log(this.state.reviewsByStars.four); this.changeView('Four Stars')}}>4 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally.four}></progress><span className="reviews-static-filtercount">{this.state.reviewtally.four}</span></div>
-                <div onClick={() => this.changeView('Three Stars')}>3 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally.three}></progress><span className="reviews-static-filtercount">{this.state.reviewtally.three}</span></div>
-                <div onClick={() => this.changeView('Two Stars')}>2 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally.two}></progress><span className="reviews-static-filtercount">{this.state.reviewtally.two}</span></div>
-                <div onClick={() => {console.log(this.state.reviewsByStars.one);this.changeView('One Star')}}>1 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally.one}></progress><span className="reviews-static-filtercount">{this.state.reviewtally.one}</span></div>
+                <div onClick={() => this.setState(prevState => ({filterButtons: [...prevState.filterButtons, 5]}), () => this.removeDuplicates())}>5 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally['5']}></progress><span className="reviews-static-filtercount">{this.state.reviewtally['5']}</span></div>
+                <div onClick={() => this.setState(prevState => ({filterButtons: [...prevState.filterButtons, 4]}), () => this.removeDuplicates())}>4 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally['4']}></progress><span className="reviews-static-filtercount">{this.state.reviewtally['4']}</span></div>
+                <div onClick={() => this.setState(prevState => ({filterButtons: [...prevState.filterButtons, 3]}), () => this.removeDuplicates())}>3 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally['3']}></progress><span className="reviews-static-filtercount">{this.state.reviewtally['3']}</span></div>
+                <div onClick={() => this.setState(prevState => ({filterButtons: [...prevState.filterButtons, 2]}), () => this.removeDuplicates())}>2 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally['2']}></progress><span className="reviews-static-filtercount">{this.state.reviewtally['2']}</span></div>
+                <div onClick={() => this.setState(prevState => ({filterButtons: [...prevState.filterButtons, 1]}), () => this.removeDuplicates())}>1 <span className="reviews-static-star">★</span><progress min="0.0" high="0.1" low="0.2" optimum="0.0" max={this.state.totalReviews} value={this.state.reviewtally['1']}></progress><span className="reviews-static-filtercount">{this.state.reviewtally['1']}</span></div>
               </div>
             </div>
             <div className="reviews-static-right">
@@ -238,10 +296,63 @@ class App extends React.Component {
           </section>
           <div className="reviews-count-header">
             <div className="reviews-count-header-child-left">{this.state.totalReviews} Reviews</div>
-            <Dropdown view={this.state.view} changeView={this.changeView}/>
+            <Dropdown 
+              view={this.state.view}
+              changeView={this.changeView}
+            />
+          </div>
+          <div>
+            <FilterDisplay 
+              filters={this.state.filterButtons}
+              updateFilters={this.updateFilters}
+              clearFilters={this.clearFilters}
+            />
           </div>
           <div className="reviews-dynamic-main">
-            {this.renderReviews()}
+            {this.state.sortedReviewsArray.map((review, index) => (
+              <Review 
+                title={review.title}
+                name={review.name}
+                reviewId={review._id}
+                rating={review.rating}
+                productName={this.state.product.product}
+                productId={this.state.product._id}
+                key={index}
+                createdAt={review.createdAt} 
+                recommended={review.recommended}
+                report={review.report}
+                helpful={review.helpful}
+                notHelpful={review.notHelpful}
+                body={review.review}
+              />
+            ))}
+          </div>
+
+
+          <div>
+            <div><h2 className="questions-static-title">Questions &amp; Answers</h2></div>
+            <div className="questions-static-write-button">Ask a question</div>
+            <div className="questions-count-header">
+              <div className="questions-count-header-child-left">{this.state.totalReviews} Questions</div>
+              <DropDownQuestions
+                view={this.state.questionsView}
+                changeView={this.changeViewQuestions}
+              />
+            </div>
+            <div className="questions-dynamic-main">
+              {this.state.sortedQuestionArray.map((question, index) => (
+                <Questions 
+                  name={question.name}
+                  body={question.question}
+                  key={index}
+                  answers={question.answers}
+                  id={question._id}
+                  createdAt={question.createdAt}
+                  productName={this.state.product.product}
+                  productId={this.state.product._id}
+                />
+              ))}
+            </div>
           </div>
         </div>
       )
@@ -257,5 +368,3 @@ class App extends React.Component {
 
 ReactDOM.render(<App/>, document.getElementById('app'))
 
-// import { library } from '@fortawesome/fontawesome-svg-core';
-// library.add(faEnvelope, faKey);

@@ -23,7 +23,7 @@ class Dropdown extends React.Component {
       return (
         <div className="reviews-count-header-child-right">
           <span className="reviews-count-header-question" data-tooltip="Relevancy sort puts the best reviews at the top. We look at things like helpfulness votes, latest reviews, pictures and other traits that readers look for in their reviews."><FontAwesomeIcon icon={faQuestionCircle}/></span>
-          <span onClick={this.toggleList}>Sort by: {this.props.view} ▼</span>
+          <span className="reviews-header-sort-word" onClick={this.toggleList}>Sort by: {this.props.view} ▼</span>
         </div>
       )
     } else {
@@ -45,24 +45,3 @@ class Dropdown extends React.Component {
 }
 
 export default Dropdown
-
-
-// this.handleBodyClick = this.handleBodyClick.bind(this)
-
-// handleBodyClick() {
-//   this.setState({
-//     listOpen: false
-//   })
-// }
-
-// componentDidMount() {
-//   document.body.addEventListener('click', this.handleBodyClick)
-// } 
-
-// componentWillUnmount() {
-//   document.body.removeEventListener('click', this.handleBodyClick);
-// }
-
-// handleClick(e) {
-//   e.preventPropagation();
-// }
