@@ -16,6 +16,7 @@ const NewSchema = new ProductSchema({
     review: String,
     recommend: Boolean,
     email: String,
+    location: String,
     feedback: String,
     helpful: {
       type: Number,
@@ -32,10 +33,14 @@ const NewSchema = new ProductSchema({
   }],
   questions: [{
     name: String,
+    email: String,
+    location: String,
     createdAt: { type: Date, default: Date.now },
     question: String,
     answers: [{
       name: String,
+      email: String,
+      location: String,
       createdAt: { type: Date, default: Date.now },
       answer: String,
       helpful: {

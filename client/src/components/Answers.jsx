@@ -16,6 +16,16 @@ class Answers extends React.Component {
     this.reportAsInAppropriate = this.reportAsInAppropriate.bind(this);
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.helpful !== prevProps.helpful || this.props.notHelpful !== prevProps.notHelpful) {
+      this.setState({
+        helpful: this.props.helpful,
+        notHelpful: this.props.notHelpful,
+        reportContent: 'Report as inappropriate'
+      })
+    }
+  }
+
   slugify(str) {
     str = str.replace(/^\s+|\s+$/g, ''); // trim
     str = str.toLowerCase();
@@ -28,29 +38,19 @@ class Answers extends React.Component {
   incrementHelpful() {
     const product = this.slugify(this.props.productName)
     axios.put(`/product/${this.props.productId}/${product}/${this.props.questionId}/${this.props.id}/answer-helpful`)
-    .then(() => {
-      this.setState(prevState => ({
-        helpful: prevState.helpful + 1
-      }))
-    })
+    .then(res => this.props.updateQuestions(res.data.questions))
   }
 
   incrementNotHelpful() {
     const product = this.slugify(this.props.productName)
     axios.put(`/product/${this.props.productId}/${product}/${this.props.questionId}/${this.props.id}/answer-not-helpful`)
-    .then(() => {
-      this.setState(prevState => ({
-        notHelpful: prevState.notHelpful + 1
-      }))
-    })
+    .then(res => this.props.updateQuestions(res.data.questions)) 
   }
 
   reportAsInAppropriate() {
     const product = this.slugify(this.props.productName)
     axios.put(`/product/${this.props.productId}/${product}/${this.props.questionId}/${this.props.id}/answer-inappropriate`)
-    .then(() => this.setState({
-      reportContent: 'Reported Review'
-    }))
+    .then(res => this.props.updateQuestions(res.data.questions))
   }
 
   render() {

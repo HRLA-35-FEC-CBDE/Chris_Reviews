@@ -323,11 +323,12 @@ function createReviews(list) {
     for (let j = 0; j <= randomness; j++) {
       var newReview = {
           name: faker.name.findName(),
+          email: faker.internet.email(),
+          location: faker.address.city() + ', ' + faker.address.stateAbbr(),
           rating: Math.floor(Math.random() * 6),
           title: randomTitle(),
           review: randomReview(),
           recommend: Math.random() >= 0.5,
-          email: faker.internet.email(),
           feedback: faker.lorem.sentence(),
           helpful: Math.floor(Math.random() * 10),
           notHelpful: Math.floor(Math.random() * 10),
@@ -345,6 +346,8 @@ function createQuestions(array) {
     for (var j = 0; j <= rand; j++) {
       var newQuestion = {
           name: faker.name.findName(),
+          email: faker.internet.email(),
+          location: faker.address.city() + ', ' + faker.address.stateAbbr(),
           question: randomQuestion(),
           answers: [],
         }
@@ -362,6 +365,8 @@ function createAnswers(arr) {
         var newAnswer = 
           {
             name: faker.name.findName(),
+            email: faker.internet.email(),
+            location: faker.address.city() + ', ' + faker.address.stateAbbr(),
             answer: randomAnswer(),
             helpful: Math.floor(Math.random() * 10),
             notHelpful: Math.floor(Math.random() * 10),

@@ -3,22 +3,22 @@ const model = require('./schema.js');
 module.exports = {
   getOne: (productId) => model.findById({ '_id': productId }),
   writeReview: (productId, review) => {
-    return model.update({'_id': productId}, {$push: {'reviews': review}})
+    return model.findOneAndUpdate({'_id': productId}, {$push: {'reviews': review}}, {new: true})
   },
   helpfulReviewYes: (productId, reviewId) => {
-    return model.update({'_id': productId, 'reviews._id': reviewId}, {$inc: {'reviews.$.helpful': 1}})
+    return model.findOneAndUpdate({'_id': productId, 'reviews._id': reviewId}, {$inc: {'reviews.$.helpful': 1}}, {new: true})
   },
   helpfulReviewNo: (productId, reviewId) => {
-    return model.update({'_id': productId, 'reviews._id': reviewId}, {$inc: {'reviews.$.notHelpful': 1}})
+    return model.findOneAndUpdate({'_id': productId, 'reviews._id': reviewId}, {$inc: {'reviews.$.notHelpful': 1}}, {new: true})
   },
   inappropriateReview: (productId, reviewId) => {
-    return model.update({'_id': productId, 'reviews._id': reviewId}, {$set: {'reviews.$.report': true}})
+    return model.findOneAndUpdate({'_id': productId, 'reviews._id': reviewId}, {$set: {'reviews.$.report': true}}, {new: true})
   },
   writeQuestion: (productId, question) => {
-    return model.update({'_id': productId}, {$push: {'questions': question}})
+    return model.findOneAndUpdate({'_id': productId}, {$push: {'questions': question}}, {new: true})
   },
   answerQuestion: (productId, questionId, answer) => {
-    return model.update({'_id': productId, 'questions._id': questionId}, {$push: {'questions.$.answers': answer}})
+    return model.findOneAndUpdate({'_id': productId, 'questions._id': questionId}, {$push: {'questions.$.answers': answer}}, {new: true})
   },
   helpfulAnswerYes: (productId, questionId, answerId) => {
     return model.findById({'_id': productId})
@@ -54,6 +54,8 @@ module.exports = {
     .catch(err => console.log(err))
   }
 }
+///////////
+//////////
 //   getOne: (_id) => model.findById({ _id }),
 //   writeReview: (_id, review) => {
 //     const product = await model.findById({ _id })

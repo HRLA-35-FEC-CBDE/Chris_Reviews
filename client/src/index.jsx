@@ -5,9 +5,11 @@ import Dropdown from './components/Dropdown.jsx';
 import FilterDisplay from './components/FilterDisplay.jsx';
 import Questions from './components/Questions.jsx';
 import DropDownQuestions from './components/DropDownQuestions.jsx';
+import WriteModal from './components/WriteModal.jsx';
+import WriteQuestion from './components/WriteQuestion.jsx';
 import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 
 class App extends React.Component {
@@ -19,6 +21,8 @@ class App extends React.Component {
       filteredReviewsArray: null,
       sortedReviewsArray: [],
       filterButtons: [],
+      writeModalOn: false,
+      answerModalOn: false,
       reviewtally: {
         1: null,
         2: null,
@@ -36,6 +40,7 @@ class App extends React.Component {
       averageReviewRating: null,
       totalReviews: null,
       starPercentage: null,
+      writeQuestionView: false,
       view: 'Most Relevant',
       questions: [],
       questionsView: 'Most Helpful Answers',
@@ -45,6 +50,10 @@ class App extends React.Component {
     this.changeView = this.changeView.bind(this);
     this.updateFilters = this.updateFilters.bind(this);
     this.clearFilters = this.clearFilters.bind(this);
+    this.writeQuestionViewOff = this.writeQuestionViewOff.bind(this);
+    this.updateQuestions = this.updateQuestions.bind(this);
+    this.updateProduct = this.updateProduct.bind(this);
+    this.toggleWriteModal = this.toggleWriteModal.bind(this);
   }
   changeViewQuestions(view) {
     this.setState({
@@ -62,6 +71,12 @@ class App extends React.Component {
     this.setState({
       filterButtons: []
     }, () => this.updateFilteredArray())
+  }
+
+  toggleWriteModal() {
+    this.setState(prevState => ({
+      writeModalOn: !prevState.writeModalOn
+    }))
   }
 
   tallyAllReviewsAndQuestions(product) {
@@ -119,6 +134,12 @@ class App extends React.Component {
     })
   }
 
+  updateProduct(updatedProduct) {
+    this.setState({
+      product: updatedProduct
+    })
+  }
+
   removeDuplicates() {
     var oldState = this.state.filterButtons
     var newerState = oldState.filter((val, index) => oldState.indexOf(val) === index)
@@ -169,6 +190,23 @@ class App extends React.Component {
         filteredReviewsArray: prevState.filteredReviewsArray.concat(this.state.reviewsByStars['5'])
       }), () => this.sortReviews())
     }
+  }
+
+  writeQuestionViewOff() {
+    this.setState({
+      writeQuestionView: false
+    })
+    ReactDOM.findDOMNode(this.refs.questions).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  handleScroll() {
+    ReactDOM.findDOMNode(this.refs.questionForm).scrollIntoView({ behavior: 'smooth', block: 'start'});
+  }
+
+  updateQuestions(newQuestions) {
+    this.setState({
+      questions: newQuestions
+    }, () => this.sortQuestions())
   }
 
   sortReviews() {
@@ -239,7 +277,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    axios.get('/product/5e7ed758d02fb47820a8923d/outdoor-research-dual-layer-fleece')
+    axios.get('/product/5e8b84d0fb44ea545fcaa0ba/dakine-expert-bottoms')
     .then((res) => {
       const loadedProduct = res.data
       this.setState({
@@ -269,7 +307,12 @@ class App extends React.Component {
       return (
         <div className="reviews-static-main">
           <div><h2 className="reviews-static-title">Reviews</h2></div>
-          <div className="reviews-static-write-button">Write a review</div>
+          <div onClick={this.toggleWriteModal} className="reviews-static-write-button">Write a review</div>
+          {this.state.writeModalOn && 
+            <div>
+              <WriteModal product={this.state.product.product} toggleWriteModal={this.toggleWriteModal}/>
+            </div>
+          }
           <section className="reviews-static-container">
             <div className="reviews-static-left">
               <div className="review-static-heading">Rating Snapshot &#40;{this.state.totalReviews}&#41;</div>
@@ -324,14 +367,13 @@ class App extends React.Component {
                 helpful={review.helpful}
                 notHelpful={review.notHelpful}
                 body={review.review}
+                updateProduct={this.updateProduct}
               />
             ))}
           </div>
-
-
           <div>
-            <div><h2 className="questions-static-title">Questions &amp; Answers</h2></div>
-            <div className="questions-static-write-button">Ask a question</div>
+            <div ref="questions"><h2 className="questions-static-title">Questions &amp; Answers</h2></div>
+            <div className="questions-static-write-button" onClick={() => {this.setState({writeQuestionView: true}, () => this.handleScroll())}}>Ask a question</div>
             <div className="questions-count-header">
               <div className="questions-count-header-child-left">{this.state.totalReviews} Questions</div>
               <DropDownQuestions
@@ -350,9 +392,19 @@ class App extends React.Component {
                   createdAt={question.createdAt}
                   productName={this.state.product.product}
                   productId={this.state.product._id}
+                  updateQuestions={this.updateQuestions}
                 />
               ))}
             </div>
+          </div>
+          <div ref="questionForm">
+            <WriteQuestion 
+              writeQuestionViewOff={this.writeQuestionViewOff}
+              view={this.state.writeQuestionView}
+              productId={this.state.product._id}
+              productName={this.state.product.product}
+              updateQuestions={this.updateQuestions}
+            />
           </div>
         </div>
       )

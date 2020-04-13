@@ -20,6 +20,16 @@ class Review extends React.Component {
     this.slugify = this.slugify.bind(this);
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.helpful !== prevProps.helpful || this.props.notHelpful !== prevProps.notHelpful) {
+      this.setState({
+        helpful: this.props.helpful,
+        notHelpful: this.props.notHelpful,
+        reportContent: 'Report as inappropriate'
+      })
+    }
+  }
+
   slugify(str) {
     str = str.replace(/^\s+|\s+$/g, ''); // trim
     str = str.toLowerCase();
@@ -33,6 +43,7 @@ class Review extends React.Component {
     console.log(this.props)
     const product = this.slugify(this.props.productName)
     axios.put(`/product/${this.props.productId}/${product}/${this.props.reviewId}/review-helpful`)
+    .then(res => this.props.updateProduct(res.data))
     .then(() => {
       this.setState(prevState => ({
         helpful: prevState.helpful + 1
@@ -43,6 +54,7 @@ class Review extends React.Component {
   incrementNotHelpful() {
     const product = this.slugify(this.props.productName)
     axios.put(`/product/${this.props.productId}/${product}/${this.props.reviewId}/review-not-helpful`)
+    .then(res => this.props.updateProduct(res.data))
     .then(() => {
       this.setState(prevState => ({
         notHelpful: prevState.notHelpful + 1
@@ -53,6 +65,7 @@ class Review extends React.Component {
   reportAsInAppropriate() {
     const product = this.slugify(this.props.productName)
     axios.put(`/product/${this.props.productId}/${product}/${this.props.reviewId}/inappropriate`)
+    .then(res => this.props.updateProduct(res.data))
     .then(() => this.setState({
       reportContent: 'Reported Review'
     }))
@@ -99,3 +112,5 @@ class Review extends React.Component {
 }
 
 export default Review;
+
+
