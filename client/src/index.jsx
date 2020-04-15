@@ -362,7 +362,7 @@ class App extends React.Component {
                 productId={this.state.product._id}
                 key={index}
                 createdAt={review.createdAt} 
-                recommended={review.recommended}
+                recommended={review.recommend}
                 report={review.report}
                 helpful={review.helpful}
                 notHelpful={review.notHelpful}

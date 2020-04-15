@@ -72,13 +72,17 @@ class Review extends React.Component {
   }
 
   conditionalRenderRecommended() {
-    if (this.props.recommended) {
+    if (this.props.recommended === false) {
       return (
         <span className="review-dynamic-recommended"><FontAwesomeIcon icon={faTimesCircle}/> No, I don't recommend this product.</span>
       )
-    } else {
+    } else if (this.props.recommended === true) {
       return (
         <span className="review-dynamic-recommended"><FontAwesomeIcon icon={faCheckCircle}/> Yes, I recommend this product.</span>
+      )
+    } else {
+      return (
+        <span></span>
       )
     }
   }

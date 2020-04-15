@@ -37,7 +37,7 @@ body {
   -moz-transition: all .2s ease-out;
   -ms-transition: all .2s ease-out;
   -o-transition: all .2s ease-out;
-  transition: all .2s ease-out
+  transition: all .2s ease-out;
 }
 
 .reviews-static-write-button:hover {
@@ -451,7 +451,7 @@ progress[value]::-webkit-progress-value {
   -moz-transition: all .2s ease-out;
   -ms-transition: all .2s ease-out;
   -o-transition: all .2s ease-out;
-  transition: all .2s ease-out
+  transition: all .2s ease-out;
 }
 
 .questions-static-write-button:hover {
@@ -701,7 +701,12 @@ progress[value]::-webkit-progress-value {
 }
 
 .ask-question-x {
-  color: #494949;
+  color: #888888;
+  cursor: pointer;
+}
+
+.ask-question-x:hover {
+  color: #545454;
 }
 
 .ask-question-disclaimer {
@@ -774,7 +779,7 @@ progress[value]::-webkit-progress-value {
   -moz-transition: all .2s ease-out;
   -ms-transition: all .2s ease-out;
   -o-transition: all .2s ease-out;
-  transition: all .2s ease-out
+  transition: all .2s ease-out;
 }
 
 .ask-question-text-area-invalid {
@@ -793,6 +798,9 @@ select:focus,
 textarea:focus,
 button:focus {
   outline: none;
+}
+input:focus, textarea:focus {
+  border: 1px solid #121212
 }
 
 input:hover, textarea:hover {
@@ -834,7 +842,7 @@ input:hover, textarea:hover {
   -moz-transition: all .2s ease-out;
   -ms-transition: all .2s ease-out;
   -o-transition: all .2s ease-out;
-  transition: all .2s ease-out
+  transition: all .2s ease-out;
 }
 
 .ask-question-nickname-input-invalid {
@@ -887,7 +895,7 @@ textarea:invalid {
   -moz-transition: all .2s ease-out;
   -ms-transition: all .2s ease-out;
   -o-transition: all .2s ease-out;
-  transition: all .2s ease-out
+  transition: all .2s ease-out;
 }
 
 .question-email-block-border {
@@ -927,7 +935,7 @@ textarea:invalid {
   -moz-transition: all .2s ease-out;
   -ms-transition: all .2s ease-out;
   -o-transition: all .2s ease-out;
-  transition: all .2s ease-out
+  transition: all .2s ease-out;
 }
 
 .ask-question-email-input-invalid {
@@ -1002,7 +1010,7 @@ textarea:invalid {
   -moz-transition: all .2s ease-out;
   -ms-transition: all .2s ease-out;
   -o-transition: all .2s ease-out;
-  transition: all .2s ease-out
+  transition: all .2s ease-out;
 }
 
 .question-submit-button:hover {
@@ -1087,6 +1095,253 @@ textarea:invalid {
 .write-modal-product-rating {
   border-top: 1px solid rgb(199, 199, 199);
   padding-left: 30px;
+  display: flex;
+  line-height: 60px;
+}
+
+.write-modal-product-rating-word {
+  font-weight: bolder;
+  margin-right: 20px;
+  padding-top: 5px;
+}
+
+.write-modal-product-rating-word-invalid {
+  font-weight: bolder;
+  margin-right: 20px;
+  padding-top: 5px;
+  color: #900;
+}
+
+/*  */
+
+.write-modal-product-rating-stars {
+  unicode-bidi: bidi-override;
+  direction: rtl;
+  text-align: center;
+  font-size: 2.5em;
+}
+
+.write-modal-product-rating-stars > .star {
+  display: inline-block;
+  position: relative;
+  width: fit-content;
+  cursor: pointer;
+  color:lightgray;
+}
+
+.write-modal-product-rating-stars > .star[rel='darkgreen']:hover:before,
+.write-modal-product-rating-stars > .star[rel='darkgreen']:hover ~ .star:before {
+   content: "\2605";
+   position: absolute;
+   left: 0; 
+   color: darkgreen;
+}
+
+.write-modal-product-rating-stars > .star[rel='greenyellow']:hover:before,
+.write-modal-product-rating-stars > .star[rel='greenyellow']:hover ~ .star:before {
+   content: "\2605";
+   position: absolute;
+   left: 0; 
+   color: greenyellow;
+}
+
+.write-modal-product-rating-stars > .star[rel='yellow']:hover:before,
+.write-modal-product-rating-stars > .star[rel='yellow']:hover ~ .star:before {
+   content: "\2605";
+   position: absolute;
+   left: 0; 
+   color: yellow;
+}
+
+.write-modal-product-rating-stars > .star[rel='orange']:hover:before,
+.write-modal-product-rating-stars > .star[rel='orange']:hover ~ .star:before {
+   content: "\2605";
+   position: absolute;
+   left: 0; 
+   color: orange;
+}
+
+.write-modal-product-rating-stars > .star[rel='red']:hover:before,
+.write-modal-product-rating-stars > .star[rel='red']:hover ~ .star:before {
+   content: "\2605";
+   position: absolute;
+   left: 0; 
+   color: red;
+}
+
+/*  */
+
+.write-modal-rating-state {
+  margin-left: 15px;
+  padding-top: 5px;
+}
+
+.write-modal-require-rating {
+  border: 1px solid #c5c5c5;
+  border-radius: 5px;
+  padding: 5px 12px;
+  border-radius: 50px;
+  margin-left: auto;
+  margin-right: 30px;
+  font-size: .9em;
+  color: #900;
+  align-self: center;
+  height: fit-content;
+  line-height: normal;
+}
+
+.write-modal-title-section {
+  border-top: 1px solid rgb(199, 199, 199);
+}
+
+.write-modal-title-section-header {
+  display: flex;
+  padding-left: 30px;
+  line-height: 30px;
+  padding-top: 15px;
+}
+
+.write-modal-title-word {
+  font-weight: bolder;
+  margin-right: 20px;
+  padding-top: 5px;
+}
+
+.write-modal-require-title {
+  border: 1px solid #c5c5c5;
+  border-radius: 5px;
+  padding: 5px 12px;
+  border-radius: 50px;
+  margin-left: auto;
+  margin-right: 30px;
+  font-size: .9em;
+  color: #900;
+  align-self: center;
+  height: fit-content;
+  line-height: normal;
+}
+
+.write-modal-title-word-invalid {
+  font-weight: bolder;
+  margin-right: 20px;
+  padding-top: 5px;
+  color: #900;
+}
+
+.write-modal-title-input {
+  display: block;
+  width: 91%;
+  margin: 5px auto 20px auto;
+  font-size: 1em;
+  box-sizing: border-box;
+  border: 1px solid rgb(199, 199, 199);
+  padding: 6px 8px 6px 8px;
+  -webkit-transition: all .2s ease-out;
+  -moz-transition: all .2s ease-out;
+  -ms-transition: all .2s ease-out;
+  -o-transition: all .2s ease-out;
+  transition: all .2s ease-out;
+}
+
+.write-modal-title-input-invalid {
+  display: block;
+  width: 91%;
+  margin: 5px auto 20px auto;
+  font-size: 1em;
+  box-sizing: border-box;
+  border: 1px solid #900;
+  padding: 6px 8px 6px 8px;
+}
+
+.write-modal-title-input:hover {
+  border: 1px solid #121212;
+}
+
+.write-modal-review-section {
+  border-top: 1px solid rgb(199, 199, 199);
+}
+
+.write-modal-review-section-header {
+  display: flex;
+  padding-left: 30px;
+  line-height: 30px;
+  padding-top: 15px;
+}
+
+.write-modal-review-body-word {
+  font-weight: bolder;
+  margin-right: 20px;
+}
+
+.write-modal-review-body-word-invalid {
+font-weight: bolder;
+margin-right: 20px;
+color: #900;
+}
+
+.write-modal-review-body-input {
+  display: block;
+  margin: 5px auto 20px auto;
+  width: 91%;
+  font-size: 1em;
+  box-sizing: border-box;
+  border: 1px solid #c5c5c5;
+  padding: 6px 8px 6px 8px;
+  -webkit-transition: all .2s ease-out;
+  -moz-transition: all .2s ease-out;
+  -ms-transition: all .2s ease-out;
+  -o-transition: all .2s ease-out;
+  transition: all .2s ease-out;
+}
+
+.write-modal-review-body-input-invalid {
+  display: block;
+  margin: 5px auto 20px auto;
+  width: 91%;
+  font-size: 1em;
+  white-space: normal;
+  padding: 6px 8px 6px 8px;
+  box-sizing: border-box;
+  border: 1px solid #900;
+}
+
+.write-modal-require-review {
+  border: 1px solid #c5c5c5;
+  border-radius: 5px;
+  padding: 5px 12px;
+  border-radius: 50px;
+  margin-left: auto;
+  margin-right: 30px;
+  font-size: .9em;
+  color: #900;
+  align-self: center;
+  height: fit-content;
+  line-height: normal;
+}
+
+
+
+.write-modal-post-button {
+  background-color: #426c90;
+  color: white;
+  width: 140px;
+  height: 50px;
+  margin-left: 30px;
+  text-align: center;
+  letter-spacing: .02em;
+  line-height: 50px;
+  font-weight: 200;
+  border-radius: 3px;
+  cursor: pointer;
+  -webkit-transition: all .2s ease-out;
+  -moz-transition: all .2s ease-out;
+  -ms-transition: all .2s ease-out;
+  -o-transition: all .2s ease-out;
+  transition: all .2s ease-out;
+}
+
+.write-modal-post-button:hover {
+  background-color: #163a59;
 }
 
 .answer-modal-overlay {
