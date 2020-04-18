@@ -39,18 +39,27 @@ class Answers extends React.Component {
     const product = this.slugify(this.props.productName)
     axios.put(`/product/${this.props.productId}/${product}/${this.props.questionId}/${this.props.id}/answer-helpful`)
     .then(res => this.props.updateQuestions(res.data.questions))
+    .then(() => this.setState(prevState => ({
+      helpful: prevState.helpful + 1
+    })))
   }
 
   incrementNotHelpful() {
     const product = this.slugify(this.props.productName)
     axios.put(`/product/${this.props.productId}/${product}/${this.props.questionId}/${this.props.id}/answer-not-helpful`)
-    .then(res => this.props.updateQuestions(res.data.questions)) 
+    .then(res => this.props.updateQuestions(res.data.questions))
+    .then(() => this.setState(prevState => ({
+      notHelpful: prevState.notHelpful + 1
+    }))) 
   }
 
   reportAsInAppropriate() {
     const product = this.slugify(this.props.productName)
     axios.put(`/product/${this.props.productId}/${product}/${this.props.questionId}/${this.props.id}/answer-inappropriate`)
     .then(res => this.props.updateQuestions(res.data.questions))
+    .then(() => this.setState({
+      reportContent: 'Reported answer'
+    }))
   }
 
   render() {

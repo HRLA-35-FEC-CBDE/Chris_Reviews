@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimesCircle, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimesCircle, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 class WriteModal extends React.Component {
   constructor(props) {
@@ -20,6 +21,23 @@ class WriteModal extends React.Component {
       review: '',
       classNameReviewBodyWord: 'write-modal-review-body-word',
       classNameReviewBodyInput: 'write-modal-review-body-input',
+      yesRecommendButton: 'write-modal-recommended-yes-button-deselected',
+      noRecommendButton: 'write-modal-recommended-no-button-deselected',
+      recommend: null,
+      classNameNicknameInput: 'write-modal-name-input',
+      classNameNicknameWord: 'write-modal-name',
+      name: '',
+      nameInvalid: false,
+      classNameLocation: '',
+      location: '',
+      locationInvalid: false,
+      classNameEmailWord: 'write-modal-email-word',
+      classNameEmailInput: 'write-modal-email-input',
+      email: '',
+      emailInvalid: false,
+      feedback: '',
+      classNameTerms: 'write-modal-terms',
+      checkboxInvalid: false,
       starOne: '',
       starTwo: '',
       starThree: '',
@@ -31,6 +49,8 @@ class WriteModal extends React.Component {
     this.resetRating = this.resetRating.bind(this);
     this.validate = this.validate.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
+    this.recommendButtonHandler = this.recommendButtonHandler.bind(this);
+    this.slugify = this.slugify.bind(this);
   }
 
   validate() {
@@ -71,12 +91,83 @@ class WriteModal extends React.Component {
         classNameReviewBodyInput: 'write-modal-review-body-input'
       })
     }
+    if (this.state.name.length === 0) {
+      this.setState({
+        nameInvalid: true,
+        classNameNicknameWord: 'write-modal-name-invalid',
+        classNameNicknameInput: 'write-modal-name-input-invalid'
+      })
+    } else {
+      this.setState({
+        nameInvalid: false,
+        classNameNicknameWord: 'write-modal-name',
+        classNameNicknameInput: 'write-modal-name-input'
+      })
+    }
+    if (this.state.email.length === 0 || !this.state.email.includes('@')) {
+      this.setState({
+        emailInvalid: true,
+        classNameEmailWord: 'write-modal-email-word-invalid',
+        classNameEmailInput: 'write-modal-email-input-invalid'
+      })
+    } else {
+      this.setState({
+        emailInvalid: false,
+        classNameEmailWord: 'write-modal-email-word',
+        classNameEmailInput: 'write-modal-email-input'
+      })
+    }
+    var input = document.getElementsByClassName("write-modal-checkbox");
+    var checkboxValidity = input[0].validity.valueMissing;
+    if (checkboxValidity) {
+      this.setState({
+        checkboxInvalid: true,
+        classNameTerms: 'write-modal-terms-invalid'
+      })
+    } else {
+      this.setState({
+        checkboxInvalid: false,
+        classNameTerms: 'write-modal-terms'
+      })
+    }
+    var allValid = !!this.state.ratingWordPermanent && this.state.title.length !== 0 && 
+      this.state.review.length !== 0 && this.state.name.length !== 0 && 
+      this.state.email.length !== 0 && this.state.email.includes('@') && 
+      !checkboxValidity
+    
+    if (allValid) {
+      var slugifiedProduct = this.slugify(this.props.product);
+      var newReview = {
+        name: this.state.name,
+        email: this.state.email,
+        location: this.state.location,
+        rating: Number(this.state.rating),
+        title: this.state.title,
+        review: this.state.review,
+        recommend: this.state.recommend,
+        feedback: this.state.feedback
+      }
+      console.log(slugifiedProduct)
+      console.log(newReview)
+      axios.put(`/product/${this.props.id}/${slugifiedProduct}`, newReview)
+      .then(res => this.props.updateProduct(res.data))
+      .then(() => this.props.updateFilters())
+      .then(() => this.props.toggleWriteModal())
+    }
+  }
+
+  slugify(str) {
+    str = str.replace(/^\s+|\s+$/g, ''); // trim
+    str = str.toLowerCase();
+    str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+    .replace(/\s+/g, '-') // collapse whitespace and replace by -
+    .replace(/-+/g, '-'); // collapse dashes
+    return str
   }
 
   toggleRating(event) {
     var val = event.target.attributes.value.value;
-    var word = event.target.getAttribute("name")
-    console.log(val)
+    var word = event.target.getAttribute("name");
     if (val === '1') {
       this.setState({
         starOne: 'red',
@@ -84,7 +175,8 @@ class WriteModal extends React.Component {
         starThree: 'lightgray',
         starFour: 'lightgray',
         starFive: 'lightgray',
-        ratingWordPermanent: word
+        ratingWordPermanent: word,
+        rating: val
       })
     }
     if (val === '2') {
@@ -94,7 +186,8 @@ class WriteModal extends React.Component {
         starThree: 'lightgray',
         starFour: 'lightgray',
         starFive: 'lightgray',
-        ratingWordPermanent: word
+        ratingWordPermanent: word,
+        rating: val
       })
     }
     if (val === '3') {
@@ -104,7 +197,8 @@ class WriteModal extends React.Component {
         starThree: 'yellow',
         starFour: 'lightgray',
         starFive: 'lightgray',
-        ratingWordPermanent: word
+        ratingWordPermanent: word,
+        rating: val
       })
     }
     if (val === '4') {
@@ -114,7 +208,8 @@ class WriteModal extends React.Component {
         starThree: 'greenyellow',
         starFour: 'greenyellow',
         starFive: 'lightgray',
-        ratingWordPermanent: word
+        ratingWordPermanent: word,
+        rating: val
       })
     }
     if (val === '5') {
@@ -124,7 +219,8 @@ class WriteModal extends React.Component {
         starThree: 'darkgreen',
         starFour: 'darkgreen',
         starFive: 'darkgreen',
-        ratingWordPermanent: word
+        ratingWordPermanent: word,
+        rating: val
       })
     }
   }
@@ -134,6 +230,23 @@ class WriteModal extends React.Component {
     this.setState({
       [target.name]: target.value
     })
+  }
+
+  recommendButtonHandler(event) {
+    const { target } = event
+    if (target.getAttribute("name") === 'yes') {
+      this.setState({
+        yesRecommendButton: 'write-modal-recommended-yes-button-selected',
+        noRecommendButton: 'write-modal-recommended-no-button-deselected',
+        recommend: true
+      })
+    } else {
+      this.setState({
+        yesRecommendButton: 'write-modal-recommended-yes-button-deselected',
+        noRecommendButton: 'write-modal-recommended-no-button-selected',
+        recommend: false
+      })
+    }
   }
 
   updateRating(event) {
@@ -215,13 +328,69 @@ class WriteModal extends React.Component {
                   <textarea onChange={this.changeHandler} className={this.state.classNameReviewBodyInput} rows={6} maxLength={1000} placeholder="Write your review here..." type="text" value={this.state.review} name="review"/>
                 </div>
                 <div className="write-modal-recommended-section">
-                  <div className="write-modal-recommended-right-child">
+                  <div className="write-modal-recommended-left-child">
                     Would you recommend this product to a friend?
                   </div>
-                  <div>
-                    <span className="write-modal-recommended-yes-button">Yes</span>
-                    <span className="write-modal-recommended-no-button">No</span>
+                  <div className="write-modal-recommended-right-child">
+                    <span onClick={this.recommendButtonHandler} name="yes" className={this.state.yesRecommendButton}>Yes</span>
+                    <span onClick={this.recommendButtonHandler} name="no" className={this.state.noRecommendButton}>No</span>
                   </div>
+                </div>
+                <div className="write-modal-nickname-location-section">
+                  <div className="write-modal-nickname-location-section-left-child">
+                    <div className="write-modal-nickname-header">
+                      <div className={this.state.classNameNicknameWord}>
+                        Nickname*
+                      </div>
+                      {this.state.nameInvalid &&
+                        <div className="write-modal-require-name">
+                          Required <FontAwesomeIcon icon={faTimesCircle} size="lg"/>
+                        </div>
+                      }
+                    </div>
+                    <input onChange={this.changeHandler} name="name" maxLength="40" value={this.state.name} className={this.state.classNameNicknameInput} placeholder="Example: jackie27" type="text"></input>
+                  </div>
+                  <div className="write-modal-nickname-location-section-right-child">
+                    <div className="write-modal-location">
+                      Location
+                    </div>
+                    <input onChange={this.changeHandler} name="location" maxLength="40" value={this.state.location} className="write-modal-location-input" placeholder="Example: Seattle, WA" type="text"></input>
+                  </div>
+                </div>
+                <div className="write-modal-email-section">
+                  <div className="write-modal-email-header">
+                    <div className={this.state.classNameEmailWord}>
+                      Email*
+                    </div>
+                    {this.state.emailInvalid &&
+                      <div className="write-modal-require-email">
+                        Required <FontAwesomeIcon icon={faTimesCircle} size="lg"/>
+                      </div>
+                    }
+                  </div>
+                  <input onChange={this.changeHandler} name="email" maxLength="75" value={this.state.email} className={this.state.classNameEmailInput} placeholder="Example: youremail@example.com" type="email"></input>
+                </div>
+                <div className="write-modal-feedback">
+                  <div className="write-modal-feedback-sentence">
+                  What feedback do you have for the people who designed and manufactured this product?
+                  </div>
+                  <textarea onChange={this.changeHandler} className="write-modal-feedback-text-area" rows={6} maxLength={1000} placeholder="Write your feedback here..." type="text" value={this.state.feedback} name="feedback"/>
+                </div>
+                <div className="write-model-checkbox-section">
+                  <div className="write-modal-checkbox-section-header">
+                    <div>
+                      <input className="write-modal-checkbox" type="checkbox" required></input>
+                      <span className={this.state.classNameTerms}>I agree to the <a href={''}>terms &amp; conditions</a>.</span>
+                    </div>
+                    {this.state.checkboxInvalid &&
+                      <div className="write-modal-require-terms">
+                        Required <FontAwesomeIcon icon={faTimesCircle} size="lg"/>
+                      </div>
+                    }
+                  </div>
+                </div>
+                <div className="write-modal-bottom-disclaimer">
+                You may receive emails regarding this submission. Any emails will include the ability to opt out of future communications.
                 </div>
                 <div onClick={this.validate} className="write-modal-post-button">
                   Post review

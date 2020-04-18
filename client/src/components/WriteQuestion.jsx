@@ -8,7 +8,6 @@ class WriteQuestion extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      invalid: false,
       nameInputValidity: false,
       textAreaValidity: false,
       emailInputValidity: false,
@@ -92,23 +91,19 @@ class WriteQuestion extends React.Component {
       }
       
       if (!event.target.checkValidity()) {
-        this.setState({
-          invalid: true
-        })
         return;
-      }
-      const data = new FormData(event.target)
-      const product = this.slugify(this.props.productName)
-      this.setState({
-        invalid: false
-      })
-      const obj = {}
-      for (var pair of data.entries()) {
-        obj[pair[0]] = pair[1]
-      }
-      axios.put(`/product/${this.props.productId}/${product}/add-question`, obj)
-      .then((res) => this.props.updateQuestions(res.data.questions))
-      .then(() => this.props.writeQuestionViewOff())
+      } else {
+        const data = new FormData(event.target)
+        const product = this.slugify(this.props.productName)
+        const obj = {}
+        for (var pair of data.entries()) {
+          obj[pair[0]] = pair[1]
+        }
+        axios.put(`/product/${this.props.productId}/${product}/add-question`, obj)
+        .then((res) => this.props.updateQuestions(res.data.questions))
+        .then(() => this.props.sortQuestions())
+        .then(() => this.props.writeQuestionViewOff())
+    }
   }
 
   render() {
@@ -137,7 +132,7 @@ class WriteQuestion extends React.Component {
                 </span>
               )}
             </div>
-            <textarea className={this.state.textAreaClassNameInput} rows={6} maxLength={255} placeholder="Ask a question..." type="text" value={this.state.question} name="question" required/>
+            <textarea className={this.state.textAreaClassNameInput} rows={6} maxLength={255} placeholder="Ask a question..." type="text" name="question" required/>
             <div className="question-name-block-border"></div>
             <div className="ask-question-name-location-section">
               <div className="ask-question-nickname-block">

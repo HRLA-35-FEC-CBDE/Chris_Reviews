@@ -67,7 +67,7 @@ class Review extends React.Component {
     axios.put(`/product/${this.props.productId}/${product}/${this.props.reviewId}/inappropriate`)
     .then(res => this.props.updateProduct(res.data))
     .then(() => this.setState({
-      reportContent: 'Reported Review'
+      reportContent: 'Reported review'
     }))
   }
 

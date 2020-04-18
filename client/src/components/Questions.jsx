@@ -32,20 +32,36 @@ class Questions extends React.Component {
           </div>
           <div className="question-dynamic-answer-count">
             <div className="question-dynamic-answer-count-number" onClick={this.toggleAnswerModal}>{this.props.answers.length}</div>
-            <div className="question-dynamic-answer-word" onClick={this.toggleAnswerModal}>answers</div>
+            {this.props.answers.length !== 1 ?
+              <div className="question-dynamic-answer-word" onClick={() => {this.toggleAnswerModal(); this.props.handleAnswerModalScroll()}}>answers</div>
+                :
+              <div className="question-dynamic-answer-word" onClick={() => {this.toggleAnswerModal(); this.props.handleAnswerModalScroll()}}>answer</div>
+            }
           </div>
         </div>
-        <div className="question-dynamic-title" onClick={this.toggleAnswerModal}>
+        <div className="question-dynamic-title" onClick={() => {this.toggleAnswerModal(); this.props.handleAnswerModalScroll()}}>
           {this.props.body}
         </div>
         <div className="question-dynamic-footer-button">
-          <div className="question-dynamic-footer-button-answer" onClick={this.toggleAnswerModal}>Answer the question</div>
+          <div className="question-dynamic-footer-button-answer" onClick={() => {this.toggleAnswerModal(); this.props.handleAnswerModalScroll()}}>Answer the question</div>
         </div>
         {this.state.answerModalOn && 
-            <div>
-              <AnswerModal toggleAnswerModal={this.toggleAnswerModal}/>
-            </div>
-          }
+          <div>
+            <AnswerModal 
+              toggleAnswerModal={this.toggleAnswerModal}
+              answers={this.props.answers}
+              questionName={this.props.name}
+              questionCreatedAt={this.props.createdAt}
+              questionAnswerCount={this.props.answers.length}
+              questionBody={this.props.body}
+              productName={this.props.productName}
+              productId={this.props.productId}
+              questionId={this.props.id}
+              updateQuestions={this.props.updateQuestions}
+              sortQuestions={this.props.sortQuestions}
+            />
+          </div>
+        }
         <div>
           {this.props.answers.map((answer, index) => (
             <Answers 

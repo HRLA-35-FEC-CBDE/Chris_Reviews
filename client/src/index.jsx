@@ -54,7 +54,20 @@ class App extends React.Component {
     this.updateQuestions = this.updateQuestions.bind(this);
     this.updateProduct = this.updateProduct.bind(this);
     this.toggleWriteModal = this.toggleWriteModal.bind(this);
+    this.handleWriteModalScroll = this.handleWriteModalScroll.bind(this);
+    this.handleAnswerModalScroll = this.handleAnswerModalScroll.bind(this);
+    this.updateFilteredArray = this.updateFilteredArray.bind(this);
+    this.sortQuestions = this.sortQuestions.bind(this);
   }
+
+  handleAnswerModalScroll() {
+    ReactDOM.findDOMNode(this.refs.writeForm).scrollIntoView({ behavior: 'smooth', block: 'start'})
+  }
+
+  handleWriteModalScroll() {
+    ReactDOM.findDOMNode(this.refs.writeForm).scrollIntoView({ behavior: 'smooth', block: 'start'})
+  }
+
   changeViewQuestions(view) {
     this.setState({
       questionsView: view
@@ -206,8 +219,9 @@ class App extends React.Component {
   updateQuestions(newQuestions) {
     this.setState({
       questions: newQuestions
-    }, () => this.sortQuestions())
+    })
   }
+
 
   sortReviews() {
     const reviews = this.state.filteredReviewsArray;
@@ -306,11 +320,17 @@ class App extends React.Component {
     } else {
       return (
         <div className="reviews-static-main">
-          <div><h2 className="reviews-static-title">Reviews</h2></div>
-          <div onClick={this.toggleWriteModal} className="reviews-static-write-button">Write a review</div>
+          <div ref="writeForm"><h2 className="reviews-static-title">Reviews</h2></div>
+          <div onClick={() => {this.toggleWriteModal(); this.handleWriteModalScroll()}} className="reviews-static-write-button">Write a review</div>
           {this.state.writeModalOn && 
             <div>
-              <WriteModal product={this.state.product.product} toggleWriteModal={this.toggleWriteModal}/>
+              <WriteModal 
+                product={this.state.product.product}
+                id={this.state.product._id}
+                toggleWriteModal={this.toggleWriteModal}
+                updateProduct={this.updateProduct}
+                updateFilters={this.updateFilters}
+              />
             </div>
           }
           <section className="reviews-static-container">
@@ -393,6 +413,8 @@ class App extends React.Component {
                   productName={this.state.product.product}
                   productId={this.state.product._id}
                   updateQuestions={this.updateQuestions}
+                  handleAnswerModalScroll={this.handleAnswerModalScroll}
+                  sortQuestions={this.sortQuestions}
                 />
               ))}
             </div>
@@ -404,6 +426,7 @@ class App extends React.Component {
               productId={this.state.product._id}
               productName={this.state.product.product}
               updateQuestions={this.updateQuestions}
+              sortQuestions={this.sortQuestions}
             />
           </div>
         </div>
