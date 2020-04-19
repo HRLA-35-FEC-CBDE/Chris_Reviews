@@ -406,4 +406,3 @@ model.insertMany(data)
 .then(() => console.log('Seeded!'))
 .catch(err => console.log(err))
  
-
